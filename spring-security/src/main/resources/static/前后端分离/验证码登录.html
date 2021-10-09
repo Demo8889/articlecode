@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>验证码登录</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+    <center><h2 class="form-signin-heading">前后端分离-模拟登录</h2></center>
+    <p>
+        <label for="username" class="sr-only">用户名</label>
+        <input type="text" id="username" name="username" class="form-control" placeholder="用户名" required
+               autofocus>
+    </p>
+    <p>
+        <label for="password" class="sr-only">密码</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="密码" required>
+    </p>
+    <button class="btn btn-lg btn-primary btn-block" type="submit" id="submit">登录</button>
+    <p></p>
+    <div id="result"></div>
+</div>
+<script>
+    let submit = document.getElementById('submit');
+    submit.addEventListener('click', (e) => {
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+        sendPost("http://localhost:8080/login", "username=" + username + "&password=" + password, (data) => {
+            if (data.success) {
+                document.getElementById('result').innerText = "登录成功，token：" + data.data;
+            } else {
+                document.getElementById('result').innerText = data.msg;
+            }
+        }, (err) => {
+            document.getElementById('result').innerText = err;
+        })
+    })
+
+    function sendPost(url, data, success, failed) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("POST", url, true);
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.send(data);
+        var vm = this;
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                var data = JSON.parse(xmlhttp.responseText);
+                success(data);
+            } else {
+                failed(xmlhttp.responseText);
+            }
+        }
+    }
+
+</script>
+</body>
+</html>
