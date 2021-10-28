@@ -18,25 +18,50 @@
         <label for="password" class="sr-only">密码</label>
         <input type="password" id="password" name="password" class="form-control" placeholder="密码" required>
     </p>
+    <p>
+        <label for="password" class="sr-only">验证码</label>
+        <input type="password" id="code" name="code" class="form-control" style="width: 400px;display: inline"
+               placeholder="验证码" required>
+        <img id="imageCode" style="cursor: pointer">
+    </p>
     <button class="btn btn-lg btn-primary btn-block" type="submit" id="submit">登录</button>
     <p></p>
     <div id="result"></div>
 </div>
 <script>
     let submit = document.getElementById('submit');
+
+    var imageCodeId;
     submit.addEventListener('click', (e) => {
         var username = document.getElementById('username').value;
         var password = document.getElementById('password').value;
-        sendPost("http://localhost:8080/login", "username=" + username + "&password=" + password, (data) => {
+        var code = document.getElementById('code').value;
+        sendPost("http://localhost:8080/login", "username=" + username + "&password=" + password + "&id=" + imageCodeId + "&code=" + code, (data) => {
             if (data.success) {
                 document.getElementById('result').innerText = "登录成功，token：" + data.data;
             } else {
                 document.getElementById('result').innerText = data.msg;
+                getImageCode();
             }
         }, (err) => {
             document.getElementById('result').innerText = err;
         })
     })
+
+    document.getElementById('imageCode').addEventListener('click', e => {
+        getImageCode();
+    });
+
+
+    function getImageCode() {
+        sendGet("http://localhost:8080/common/getImageCode", data => {
+            imageCodeId = data.id;
+            document.getElementById('imageCode').setAttribute("src", data.data);
+        }, err => {
+        })
+    }
+
+    getImageCode();
 
     function sendPost(url, data, success, failed) {
         var xmlhttp = new XMLHttpRequest();
@@ -54,6 +79,20 @@
         }
     }
 
+    function sendGet(url, success, failed) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", url);
+        xmlhttp.send();
+        var vm = this;
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                var data = JSON.parse(xmlhttp.responseText);
+                success(data);
+            } else {
+                failed(xmlhttp.responseText);
+            }
+        }
+    }
 </script>
 </body>
 </html>

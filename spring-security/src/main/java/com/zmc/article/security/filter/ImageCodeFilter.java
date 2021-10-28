@@ -49,7 +49,7 @@ public class ImageCodeFilter extends OncePerRequestFilter {
                 return;
             }
             imageCodeCaptchaRedis.deleteCaptcha(id);
-            if (!cacheCode.equals(code)) {
+            if (!cacheCode.equalsIgnoreCase(code)) {
                 JsonResult.error("验证码不正确！");
                 return;
             }

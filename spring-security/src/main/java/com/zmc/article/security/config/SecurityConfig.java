@@ -55,13 +55,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureHandler(authenticationFailureHandler)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/favicon.ico").permitAll()
+                .antMatchers("/login", "/common/**", "/favicon.ico").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .csrf()
                 .disable()
-                //.addFilterBefore(imageCodeFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(imageCodeFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
                 .accessDeniedHandler(myAccessDeniedHandler);
         //禁用cookies
