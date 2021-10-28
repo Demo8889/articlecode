@@ -59,11 +59,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        //解决跨域，这里只是为了测试【验证码登录.html】，实际环境请删除
+        //解决跨域，这里只是为了测试【前后端分享json返回格式.html】，实际环境请删除
         http.cors();
     }
 
-    //解决跨域，这里只是为了测试【验证码登录.html】，实际环境请删除
+    //解决跨域，这里只是为了测试【前后端分享json返回格式.html】，实际环境请删除
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
