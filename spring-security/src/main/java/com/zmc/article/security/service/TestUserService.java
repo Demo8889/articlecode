@@ -9,4 +9,6 @@ import com.zmc.article.security.entity.TestUser;
 public interface TestUserService {
 
     TestUser getByLoginName(String username);
+
+    TestUser getByPhone(String phone);
 }

@@ -24,4 +24,9 @@ public class TestUserServiceImpl implements TestUserService {
     public TestUser getByLoginName(String username) {
         return new TestUser().setId(9527).setUsername("Demo").setPassword(passwordEncoder.encode("123456")).setStatus(true);
     }
+
+    @Override
+    public TestUser getByPhone(String phone) {
+        return new TestUser().setId(9527).setUsername("Demo").setStatus(true);
+    }
 }

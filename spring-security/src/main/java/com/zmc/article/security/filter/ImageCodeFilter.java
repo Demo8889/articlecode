@@ -24,7 +24,7 @@ public class ImageCodeFilter extends OncePerRequestFilter {
     @Resource
     private ImageCodeCaptchaRedis imageCodeCaptchaRedis;
 
-    private static final String[] PROCESS_URL = {"/login"};
+    private static final String[] PROCESS_URL = {"/login", "/common/getPhoneSmsCode"};
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -36,21 +36,21 @@ public class ImageCodeFilter extends OncePerRequestFilter {
             String id = request.getParameter("id");
             String code = request.getParameter("code");
             if (StringUtils.isBlank(id)) {
-                JsonResult.error("验证码标识不能为空");
+                JsonResult.error("图形验证码标识不能为空");
                 return;
             }
             if (StringUtils.isBlank(code)) {
-                JsonResult.error("验证码不能为空");
+                JsonResult.error("图形验证码不能为空");
                 return;
             }
             String cacheCode = imageCodeCaptchaRedis.getCaptchaKey(id);
             if (StringUtils.isEmpty(cacheCode)) {
-                JsonResult.error("验证码已过期，请重新输入！");
+                JsonResult.error("图形验证码已过期，请重新输入！");
                 return;
             }
             imageCodeCaptchaRedis.deleteCaptcha(id);
             if (!cacheCode.equalsIgnoreCase(code)) {
-                JsonResult.error("验证码不正确！");
+                JsonResult.error("图形验证码不正确！");
                 return;
             }
             break;

@@ -2,27 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>验证码登录</title>
+    <title>手机号登录</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet"/>
 </head>
 <body>
 <div class="container">
-    <center><h2 class="form-signin-heading">前后端分离-模拟登录</h2></center>
+    <center><h2 class="form-signin-heading">前后端分离-手机号登录</h2></center>
     <p>
-        <label for="username" class="sr-only">用户名</label>
-        <input type="text" id="username" name="username" class="form-control" placeholder="用户名" required
+        <label for="phone" class="sr-only">手机号</label>
+        <input type="text" id="phone" name="phone" class="form-control" placeholder="手机号" required
+               value="18818181818"
                autofocus>
     </p>
     <p>
-        <label for="password" class="sr-only">密码</label>
-        <input type="password" id="password" name="password" class="form-control" placeholder="密码" required>
+        <label for="code" class="sr-only">图形验证码</label>
+        <input type="text" id="code" name="code" class="form-control" style="width: 400px;display: inline"
+               placeholder="图形验证码" required>
+        <img id="imageCode" style="cursor: pointer">
     </p>
     <p>
-        <label for="password" class="sr-only">验证码</label>
-        <input type="text" id="code" name="code" class="form-control" style="width: 400px;display: inline"
-               placeholder="验证码" required>
-        <img id="imageCode" style="cursor: pointer">
+        <label for="smsCode" class="sr-only">短信验证码</label>
+        <input type="text" id="smsCode" name="smsCode" class="form-control" placeholder="短信验证码" required
+               style="width: 400px;display: inline">
+        <button id="phoneCodeButton"
+                style="background-color: #007bff;color: #FFF;border: 0;border-radius: 4px;padding: 5px 10px;cursor: pointer">
+            获取手机验证码
+        </button>
     </p>
     <button class="btn btn-lg btn-primary btn-block" type="submit" id="submit">登录</button>
     <p></p>
@@ -33,10 +39,9 @@
 
     var imageCodeId;
     submit.addEventListener('click', (e) => {
-        var username = document.getElementById('username').value;
-        var password = document.getElementById('password').value;
-        var code = document.getElementById('code').value;
-        sendPost("http://localhost:8080/login", "username=" + username + "&password=" + password + "&id=" + imageCodeId + "&code=" + code, (data) => {
+        var phone = document.getElementById('phone').value;
+        var smsCode = document.getElementById('smsCode').value;
+        sendPost("http://localhost:8080/phoneLogin", "phone=" + phone + "&smsCode=" + smsCode, (data) => {
             if (data.success) {
                 document.getElementById('result').innerText = "登录成功，token：" + data.data;
             } else {
@@ -47,6 +52,28 @@
             document.getElementById('result').innerText = err;
         })
     })
+
+    //短信验证码
+    document.getElementById('phoneCodeButton').addEventListener('click', e => {
+        getPhoneCode();
+    });
+
+    function getPhoneCode() {
+        var phone = document.getElementById('phone').value;
+        var code = document.getElementById('code').value;
+        sendGet("http://localhost:8080/common/getPhoneSmsCode?phone=" + phone + "&id=" + imageCodeId + "&code=" + code, data => {
+            if (data.success) {
+                document.getElementById('result').innerText = "短信验证码获取成功，验证码是：" + data.data;
+            } else {
+                getImageCode();
+                document.getElementById('result').innerText = data.msg;
+            }
+        }, err => {
+        })
+    }
+
+    //图形验证码
+    getImageCode();
 
     document.getElementById('imageCode').addEventListener('click', e => {
         getImageCode();
@@ -60,8 +87,6 @@
         }, err => {
         })
     }
-
-    getImageCode();
 
     function sendPost(url, data, success, failed) {
         var xmlhttp = new XMLHttpRequest();
